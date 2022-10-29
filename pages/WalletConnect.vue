@@ -11,13 +11,6 @@
 </template>
 	
 <script>
-import {config} from '/config.js'
-//import { ChatClient } from "@walletconnect/chat-client";
-
-if (typeof window !== "undefined")
-     window.global = window;
-const ChatClient = require("@walletconnect/chat-client").ChatClient
-
 export default {
   name: "WalletConnect",
   data() {
@@ -28,26 +21,22 @@ export default {
   },
   methods: {
     startPresent: async function() {
-      
-      console.log(config.walletConnectId)
-      
-      const chatClient = await ChatClient.init({
-         projectId: config.walletConnectId
-      })
-      chatClient.on("chat_joined", async () => {
+      const wcChatClient = await this.$globals.getWcChatClient()
+      wcChatClient.on("chat_joined", async () => {
         this.statusMsg = "RP joined"
       });
-      chatClient.on("chat_message", async (event) => {
+      wcChatClient.on("chat_message", async (event) => {
         console.log(event)
         this.statusMsg = "Credential requested: " + event.params.message
+        this.$store.commit('wallet/setWalletConnectPresentationRequest', event)
         const sessionInfo = await this.$axios.$get("/api/wallet/presentation/create?type=" + event.params.message)
         this.$router.replace("/CredentialRequest/?sessionId=" + sessionInfo.id)
         
       });
-      await chatClient.register({ account: `eip155:1:${this.$auth.user.ethAccount}` });
+      await wcChatClient.register({ account: `eip155:1:${this.$auth.user.ethAccount}` });
       
       this.statusMsg = "Contacting RP"
-      await chatClient.invite({
+      await wcChatClient.invite({
          account: this.rpAddress, // the CAIP-2 formatted account of the recipient.
          invite: {
            message: "StartPresentation", // an intro message from you

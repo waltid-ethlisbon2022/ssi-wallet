@@ -66,6 +66,7 @@
 </template>
 
 <script>
+import {config} from '/config.js'
 
 export default {
   name: 'CredentialRequest',
@@ -117,11 +118,35 @@ export default {
     
       const siopResp = await this.$axios.$post("/api/wallet/presentation/fulfill", selectedPresentableCredentials, { params: { sessionId: this.presentationSessionInfo.id }})
       console.log("PE Response:", siopResp)
-      this.$refs.responseIdToken.value = siopResp.id_token
-      this.$refs.responseVpToken.value = siopResp.vp_token
-      this.$refs.responsePresentationSubmission.value = siopResp.presentation_submission
-      this.$refs.responseState.value = siopResp.state
-      this.$refs.responseForm.submit()
+      if(this.presentationSessionInfo.redirectUri.startsWith("walletconnect:/")) {
+        const presentationRequest = this.$store.state.wallet.walletConnectPresentationRequest
+        console.log("WALLET CONNECT:", presentationRequest)
+        const wcChatClient = await this.$globals.getWcChatClient()
+        await wcChatClient.message({
+          topic: presentationRequest.topic, // Topic of the chat thread this message should be sent to.
+          payload: {
+            message: siopResp.vp_token, // the message you want to send.
+            authorAccount: `eip155:1:${this.$auth.user.ethAccount}`, // your CAIP-2 formatted account that you registered previously.
+            timestamp: Date.now(),
+          },
+        }).then(() => {
+          console.log("vp_token sent to WalletConnect chat client")
+          //return wcChatClient.leave({ topic: presentationRequest.topic })
+        });
+        this.$toast.success('Presentation sent', {duration: 3000, icon: 'bi bi-check-circle-fill', iconPack: 'custom-class', action : {
+          text : 'OK',
+          onClick : (e, toastObject) => {
+              toastObject.goAway(0);
+          }
+        }})
+        this.$router.replace(config.home)
+      } else {
+        this.$refs.responseIdToken.value = siopResp.id_token
+        this.$refs.responseVpToken.value = siopResp.vp_token
+        this.$refs.responsePresentationSubmission.value = siopResp.presentation_submission
+        this.$refs.responseState.value = siopResp.state
+        this.$refs.responseForm.submit()
+      }
     },
     fetchFromIssuer: async function() {
       console.log(this.selectedIssuer)

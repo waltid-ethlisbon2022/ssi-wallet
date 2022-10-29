@@ -3,7 +3,8 @@ export const state = () => ({
     initialized: false,
     dids: [],
     currentDid: '',
-    defaultChain: ''
+    defaultChain: '',
+    walletConnectPresentationRequest: null
   })
   
 export const mutations = {
@@ -16,6 +17,10 @@ export const mutations = {
     setCurrentDid(state, did) {
         state.currentDid = did
         localStorage.setItem('default_did', did)
+    },
+    setWalletConnectPresentationRequest(state, presentationRequest) {
+      console.log("WalletConnect presentation request", presentationRequest)
+      state.walletConnectPresentationRequest = presentationRequest
     },
     setDefaultChain(state, chain){
       state.defaultChain = chain

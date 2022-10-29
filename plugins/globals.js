@@ -1,3 +1,9 @@
+import {config} from '/config.js'
+
+if (typeof window !== "undefined" && window.global == null)
+     window.global = window;
+const ChatClient = require("@walletconnect/chat-client").ChatClient
+
 export default (context, inject) => {
     const globals = {
         thumbnail(credential) {
@@ -75,6 +81,15 @@ export default (context, inject) => {
                 url = "/NoImageAvailable.jpg"
             }
             return url
+        },
+        wcChatClient: null,
+        async getWcChatClient() {
+            if(this.wcChatClient == null) {
+                this.wcChatClient = await ChatClient.init({
+                    projectId: config.walletConnectId
+                })
+            }
+            return this.wcChatClient
         }
     }
     // Inject $convertUrl(url) in Vue, context and store.
