@@ -53,6 +53,9 @@
     <NuxtLink to="/AddCredentialQR" class="btn btn-primary py-2">
       <i class="bi bi-upc-scan"></i>
     </NuxtLink>
+    <NuxtLink to="/WalletConnect" class="btn btn-primary py-2">
+      <img src="https://docs.walletconnect.com/img/walletconnect-logo-white.svg" width="24px" />
+    </NuxtLink>
   </div>
 </template>
 

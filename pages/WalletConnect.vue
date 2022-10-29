@@ -3,6 +3,7 @@
   <h1>Present credential via</h1>
   <img src="https://raw.githubusercontent.com/WalletConnect/web-examples/main/dapps/react-dapp-v2/public/assets/walletconnect.png" width="250px" class="mb-2"/>
 
+  <video id="scanner-video" class="image-fluid mx-auto img-thumbnail"></video>
   <input type="text" class="form-control border-primary my-2 mx-auto" v-model="rpAddress">
   <button :disabled="rpAddress == null" class="btn btn-primary" @click="startPresent">Start present</button>
 
@@ -11,6 +12,7 @@
 </template>
 	
 <script>
+import QrScanner from 'qr-scanner'
 export default {
   name: "WalletConnect",
   data() {
@@ -43,8 +45,29 @@ export default {
            account: `eip155:1:${this.$auth.user.ethAccount}`, // your CAIP-2 formatted account that you registered previously.
          },
       });
+    },
+    checkScanResult(result) {
+      return result.data.startsWith("eip155:1:")
     }
-  }	
+  },
+  mounted() {
+    const qrScanner = new QrScanner(document.getElementById("scanner-video"), 
+      result => {
+        if(this.checkScanResult(result)) {
+          qrScanner.stop()
+          this.rpAddress = result.data;
+          this.startPresent();
+        } else {
+          console.log("Failed to parse QR code", result.data)
+        }
+      },
+      {
+        highlightScanRegion: true,
+        highlightCodeOutline: true
+      });
+    window.addEventListener('beforeunload', () => { qrScanner.stop() })
+    qrScanner.start()
+  }
 }
 </script>
 	
