@@ -19,6 +19,7 @@
         "@taquito/beacon-wallet": "^14.0.0",
         "@taquito/taquito": "^14.0.0",
         "@vue/composition-api": "^1.4.9",
+        "@walletconnect/chat-client": "^0.1.6",
         "@walletconnect/web3-provider": "^1.7.7",
         "axios": "^0.24.0",
         "bootstrap": "^5.1.3",

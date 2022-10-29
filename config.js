@@ -23,6 +23,7 @@ const config = {
         "POLYGON": "https://opensea.io/assets/matic/",
         "ETHEREUM": "https://opensea.io/assets/ethereum/",
         "TEZOS": "https://rarible.com/token/tezos/",
-    }
+    },
+    walletConnectId: "b2da5835fd997d310c8ea5b541a089f7"
 }
 export{config}

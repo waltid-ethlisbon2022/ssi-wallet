@@ -19,6 +19,9 @@
               <li v-if="!config.hidePage.credentials">
                   <NuxtLink to="/credentials">{{$t('MENU.CREDENTIALS')}}</NuxtLink>
               </li>
+              <li v-if="showNFTSLink">
+                <nuxt-link to="/WalletConnect/">WalletConnect</nuxt-link>
+              </li>
               <li v-if="!config.hidePage.nfts">
                   <NuxtLink :to="'/nfts/' + defaultChain" v-if="showNFTSLink">{{$t('MENU.NFTS')}}</NuxtLink>
               </li>
